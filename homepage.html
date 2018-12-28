@@ -68,7 +68,7 @@
             <label><input ng-change="setName(users[key].name)" ng-model="users[key].name" type="text"></label>
             <label><input ng-change="setCountChange(users[key].count)" ng-model="users[key].count" type="number"></label>
             <button data-id="{{user.id}}" ng-click="setCount($event)">Count</button>
-            <span class="em" ng-repeat="item in user.items track by $index | groupBy : 'id' " class="section">{{item.title}}<span class="count">{{item.count}}</span></span>
+            <span class="em" ng-repeat="item in user.items track by $index" class="section">{{item.title}}<span class="count">{{item.count}}</span></span>
         </li>
     </ul>
 

@@ -156,7 +156,22 @@ angular.module('appTest', [])
 
             $scope.users.find((user: any) => {
                 if (user.id == $scope.getUserId) {
-                    user.items.push(data);
+
+                    let match = user.items.find((item: any) => item.id == data.id);
+
+                    if (match) {
+                        user.items.find((item:any) => {
+                            if(item.id === match.id){
+                                item.count++;
+                            }
+                        });
+                    } else {
+                        user.items.push(data);
+                    }
+
+
+                    console.log($scope.users);
+                    console.log($scope.items);
                 }
             });
         };
