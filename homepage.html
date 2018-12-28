@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appTest">
+<head>
+    <meta charset="UTF-8">
+    <title>AngularJS</title>
+    <script src="./js/homepage.js"></script>
+    <style>
+        li {
+            display: inline-block;
+            width: 20%;
+            border: solid;
+            padding: 10px;
+            vertical-align: top;
+            margin: 4px;
+            cursor: pointer;
+        }
+
+        input {
+            box-sizing : border-box;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .section {
+            display: block;
+            margin-bottom: 4px;
+        }
+        .em {
+            line-height: 16px;
+            display: block;
+            padding: 6px 30px 6px 0;
+            position: relative;
+        }
+
+        .em + .em {
+            border-top: solid 1px;
+        }
+
+        .em .count {
+            line-height: 20px;
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 20px;
+            bottom: 0;
+            margin: auto;
+            font-size: 20px;
+        }
+
+        .active {
+            background: #ffeb3b;
+        }
+    </style>
+</head>
+<body>
+
+<!-- usersController -->
+<div ng-controller="usersController">
+    <h1>AngularJS {{name}}</h1>
+    <ul>
+        <li data-id="{{user.id}}" ng-repeat="(key, user) in users" ng-click="setUserId($event)">
+            <span class="section">{{user.name}}</span>
+            <span class="section"><strong>count:</strong> {{user.count}}</span>
+            <label><input ng-change="setName(users[key].name)" ng-model="users[key].name" type="text"></label>
+            <label><input ng-change="setCountChange(users[key].count)" ng-model="users[key].count" type="number"></label>
+            <button data-id="{{user.id}}" ng-click="setCount($event)">Count</button>
+            <span class="em" ng-repeat="item in user.items track by $index | groupBy : 'id' " class="section">{{item.title}}<span class="count">{{item.count}}</span></span>
+        </li>
+    </ul>
+
+    <h2>Items</h2>
+    <ul>
+        <li data-id="{{item.id}}" ng-click="addItem($event)" ng-repeat="(key, item) in items">{{item.title}}</li>
+    </ul>
+</div>
+</body>
+</html>
