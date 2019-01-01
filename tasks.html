@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appTasks">
+<head>
+    <meta charset="UTF-8">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <style>
+        body{
+            background: #569921;
+            padding: 10px;
+        }
+        .list {
+            background-color: #dfe3e6;
+            border-radius: 3px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            max-height: 100%;
+            position: relative;
+            white-space: normal;
+            padding: 10px;
+        }
+        .task-card {
+            background-color: #fff;
+            border-radius: 3px;
+            box-shadow: 0 1px 0 rgba(9,45,66,.25);
+            cursor: pointer;
+            display: block;
+            max-width: 300px;
+            min-height: 20px;
+            position: relative;
+            text-decoration: none;
+            z-index: 0;
+            padding: 4px 10px;
+            margin: 8px 0;
+        }
+        .margin-bt-10{
+            margin-bottom: 10px;
+        }
+        .margin-tp-10 {
+            margin-top: 10px;
+        }
+        .color-white {
+            color:#fff;
+        }
+        .modal {
+            display: block;
+            background: rgba(0, 0, 0, 0.5);
+        }
+    </style>
+    <script src="./js/tasks.js"></script>
+</head>
+<body>
+<div ng-controller="tasksController">
+    <h2 class="color-white">{{name}}</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="list">
+                <div class="hd">
+                    <button class="btn btn-sm btn-secondary" ng-click="addTask($event)">Add task</button>
+                </div>
+                <div class="bd">
+                    <div ng-include="showAddTask ? tpl.addTask : ''"></div>
+                    <div data-task="{{item.id}}" class="task-card" ng-repeat="(key, item) in tasks track by $index">
+                        <span class="title">{{item.name}}</span>
+                        <button class="btn btn-sm btn-secondary" ng-click="editTask($event)">Edit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div ng-include="showEditTask ? tpl.editTask : ''"></div>
+</div>
+</body>
+</html>

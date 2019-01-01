@@ -5,14 +5,35 @@
     <title>AngularJS</title>
     <script src="./js/homepage.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        .display-block {
+            display: block;
+        }
+        .width-max{
+            width: 100%;
+        }
+        .margin-bt-10 {
+            margin-bottom: 10px;
+        }
+        ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
         li {
             display: inline-block;
-            width: 20%;
+            width: 48%;
             border: solid;
             padding: 10px;
             vertical-align: top;
-            margin: 4px;
             cursor: pointer;
+            background-color: #e6e6e6;
+        }
+
+        li:active {
+            background: #feed00;
         }
 
         input {
@@ -32,18 +53,23 @@
         .em {
             line-height: 16px;
             display: block;
-            padding: 6px 30px 6px 0;
+            padding: 10px;
             position: relative;
+            background: #fff;
+            border-radius: 3px;
+            margin: 5px 0;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.27);
         }
 
-        .em + .em {
-            border-top: solid 1px;
+        .title {
+            margin-bottom: 10px;
+            font-weight: 900;
         }
 
         .em .count {
             line-height: 20px;
             position: absolute;
-            right: 0;
+            right: 10px;
             top: 0;
             height: 20px;
             bottom: 0;
@@ -54,28 +80,119 @@
         .active {
             background: #ffeb3b;
         }
+
+        .container {
+            position: absolute;
+            top: 80px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            border-top: solid;
+        }
+        .dragged {
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            -o-user-select: none;
+            -moz-user-select: none;
+            background: navajowhite;
+        }
+        .dragged .em {
+            background: green;
+            pointer-events: none;
+        }
+        .main {
+            width: 70%;
+            float: left;
+            position: absolute;
+            left: 0;
+            top:0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 0 0 0 10px;
+            margin: 0 -10px;
+        }
+
+        .main li {
+            margin: 1%;
+        }
+        .right {
+            width: 30%;
+            float: right;
+            position: absolute;
+            right: 0;
+            top:0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 0 10px 0 0;
+        }
+
+        .btn {
+            background: red;
+            display: inline-block;
+            padding: 4px 10px;
+        }
+
+        .cloned {
+            pointer-events: none;
+            background: #fff;
+            position: absolute;
+            width: 200px;
+        }
+        .hdn {
+            display: none;
+        }
+
+        .box {
+            padding: 10px;
+            background: #e6e6e6;
+            border: solid;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
 <!-- usersController -->
-<div ng-controller="usersController">
-    <h1>AngularJS {{name}}</h1>
-    <ul>
-        <li data-id="{{user.id}}" ng-repeat="(key, user) in users" ng-click="setUserId($event)">
-            <span class="section">{{user.name}}</span>
-            <span class="section"><strong>count:</strong> {{user.count}}</span>
-            <label><input ng-change="setName(users[key].name)" ng-model="users[key].name" type="text"></label>
-            <label><input ng-change="setCountChange(users[key].count)" ng-model="users[key].count" type="number"></label>
-            <button data-id="{{user.id}}" ng-click="setCount($event)">Count</button>
-            <span class="em" ng-repeat="item in user.items track by $index" class="section">{{item.title}}<span class="count">{{item.count}}</span></span>
-        </li>
-    </ul>
+<div ng-controller="usersController" ng-mousemove="move($event)" ng-mouseup="dragDestroy($event)">
+    <div class="container">
+        <div class="main">
+            <h2>Users</h2>
+            <ul>
+                <li data-userId="{{user.id}}" data-id="{{user.id}}" ng-repeat="(key, user) in users" ng-click="setUserId($event)">
+                    <span class="section">{{user.name}}</span>
+                    <span class="section"><strong>count:</strong> {{user.count}}</span>
+                    <label><input ng-change="setName(users[key].name)" ng-model="users[key].name" type="text"></label>
+                    <label><input ng-change="setCountChange(users[key].count)" ng-model="users[key].count" type="number"></label>
+                    <button data-id="{{user.id}}" ng-click="setCount($event)">Count</button>
+                    <span data-id="{{item.id}}" class="em" ng-repeat="item in user.items | uniq: item.id track by $index" class="section">
+                        <span class="title display-block">{{item.title}}</span>
+                        <span class="display-block">User id - {{item.userId}}</span>
+                        <span class="display-block">Completed - {{item.completed}}</span>
+                        <button ng-click="addItem($event)">+</button>
+                        <button ng-click="removeItem($event)">-</button>
+                        <span class="count">{{getCount(user.id, item.id)}}</span>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="right">
+            <h2>Items</h2>
+            <button ng-click="createItem($event)">Create item</button>
+            <div ng-include="createTaskTpl"></div>
 
-    <h2>Items</h2>
-    <ul>
-        <li data-id="{{item.id}}" ng-click="addItem($event)" ng-repeat="(key, item) in items">{{item.title}}</li>
-    </ul>
+            <div ng-repeat="(key, item) in tasks" ng-include="taskTpl"></div>
+
+            <ul>
+                <li ng-repeat="(key, item) in tasks">{{item.name}}{{item.description}}</li>
+            </ul>
+            <ul id="items">
+                <li class="display-block width-max margin-bt-10 item" data-itemId="{{item.id}}" data-id="{{item.id}}" ng-mousedown="dragInit($event)" ng-repeat="(key, item) in items">{{item.title}}</li>
+            </ul>
+        </div>
+    </div>
 </div>
 </body>
 </html>

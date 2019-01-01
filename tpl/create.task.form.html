@@ -1,0 +1,18 @@
+<form action="" class="box" ng-submit="createTask($event)">
+    <label for="taskId"></label>
+    <span class="label">Name: {{item.name}}</span>
+    <input id="taskId" type="text" ng-model="taskName" name="taskName" value="{{item.name}}">
+
+    <label for="taskUser"></label>
+    <span class="label">User:</span>
+    <select name="taskUser" ng-model="taskUser" id="taskUser">
+        <option value="0">--Select user--</option>
+        <option value="1">User1</option>
+        <option value="2">User2</option>
+    </select>
+
+    <label for="taskDescription"></label>
+    <textarea name="taskDescription" ng-model="taskDescription" id="taskDescription" cols="30" rows="10"></textarea>
+
+    <input type="submit" value="Save">
+</form>

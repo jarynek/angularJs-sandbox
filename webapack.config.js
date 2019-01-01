@@ -2,7 +2,8 @@ module.exports = {
     watch: true,
     mode: 'development',
     entry: {
-        homepage: './ts/homepage.ts'
+        homepage: './ts/homepage.ts',
+        tasks: './ts/tasks.ts',
     },
     module: {
         rules: [

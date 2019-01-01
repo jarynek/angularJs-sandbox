@@ -14,7 +14,10 @@
   "dependencies": {
     "@types/node": "^10.12.18",
     "angular": "^1.7.5",
-    "gulp": "^4.0.0"
+    "angular-filter": "^0.5.17",
+    "gulp": "^4.0.0",
+    "ng-draggable": "^1.0.0",
+    "ngdraggable": "^0.1.10"
   },
   "devDependencies": {
     "ts-loader": "^5.3.2",

@@ -1,0 +1,20 @@
+<div class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title" id="mySmallModalLabel">{{task.name}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" ng-click="toggleClass('sdfsdf')">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="" data-task="{{task.id}}" data-action="edit" class="box margin-bt-10 margin-tp-10" ng-submit="saveTask($event)">
+                    <textarea placeholder="Task name" class="form-control margin-bt-10" id="taskId" type="text" ng-model="taskName" name="taskName" value="{{task.name}}"></textarea>
+
+                    <input class="btn btn-sm btn-success" type="submit" value="Save task">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
