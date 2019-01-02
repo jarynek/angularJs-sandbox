@@ -1,0 +1,13 @@
+<div class="list" data-list="{{list.id}}">
+    <div class="hd">
+        {{list.name}}
+        <button class="btn btn-sm btn-secondary" ng-click="addListTask($event)">Add task</button>
+    </div>
+    <div class="bd">
+        <div ng-include="list.addTask ? tpl.listAddTask : ''"></div>
+        <div ng-mousedown="dropAble($event)" ng-repeat="(key, task) in list.tasks track by $index" data-task="{{item.id}}" class="task-card">
+            <span class="title">{{task.name}}</span>
+            <button class="btn btn-sm btn-light fa fa-pencil task-card-operation" title="Edit"></button>
+        </div>
+    </div>
+</div>

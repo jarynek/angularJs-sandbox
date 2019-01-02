@@ -8,21 +8,38 @@ angularTask.module('appTasks', [filterTask])
                 let tasks = scope.tasks.map((item:any) => item.id);
                 let getId = !tasks.length ? 0 : Math.max(...tasks);
                 return getId;
+            },
+            setListTaskId: (arg: any)=>{
+                let ids = [0];
+                arg.map((item:any)=>{
+                    item.tasks.map((task:any)=>{
+                        ids.push(task.id);
+                    });
+                });
+                return Math.max(...ids);
             }
         }
+
     })
     .controller('tasksController', function ($scope: any, Services:any) {
 
         $scope.name = 'tasks';
+        $scope.dropInit = false;
 
         $scope.tpl = {
             addTask: 'tpl/add.task.form.html',
             editTask: 'tpl/edit.task.form.html',
+            listAddTask: 'tpl/list.add.task.form.html',
         };
 
         $scope.tasksStorage = window.localStorage;
         $scope.tasksData = JSON.parse($scope.tasksStorage.getItem('tasks'));
         $scope.tasks = $scope.tasksData ? $scope.tasksData : [];
+        $scope.lists = [
+            {id:1, name:'One', addTask:null, tasks:[]},
+            {id:2, name:'Two', addTask:null, tasks:[]},
+            {id:3, name:'Three', addTask:null, tasks:[]}
+        ];
 
         $scope.showAddTask = false;
         $scope.showEditTask = false;
@@ -100,4 +117,65 @@ angularTask.module('appTasks', [filterTask])
             $scope.task = $scope.tasks.filter((item:any) => item.id == id)[0];
             $scope.showEditTask = true;
         }
+
+        /**
+         * addListTask
+         * @param {object} event
+         */
+        $scope.addListTask = function (event:any) {
+            let el = event.target;
+            let list = el.closest('.list').getAttribute('data-list');
+
+            $scope.lists.filter((item:any)=>{
+                if(item.id == list){
+                    item.addTask = !item.addTask;
+                }
+            });
+        };
+
+        /**
+         * Save list task
+         * @param {object} event
+         */
+        $scope.saveListTask = function (event:any) {
+            event.preventDefault();
+
+            let el = event.target;
+            let list = el.closest('.list').getAttribute('data-list');
+
+            $scope.lists.filter((item:any)=>{
+                if(item.id == list){
+                    item.tasks.push({id:(Services.setListTaskId($scope.lists) + 1), name: this.taskName});
+                    item.addTask = false;
+                }
+            });
+
+            console.log($scope.lists);
+        }
+
+        $scope.dropAble = function (event:any) {
+            $scope.dropInit = true;
+
+            let body = document.getElementsByTagName('body');
+            let el = event.target.closest('.task-card');
+
+            body[0].classList.add('lock');
+            el.classList.add('dragged');
+        };
+
+        $scope.moveAble = function (event:any) {
+            if($scope.dropInit === true){
+                let el = document.getElementsByClassName('dragged');
+                el[0].setAttribute('style', 'left: ' + event.pageX + 'px; top:' + event.pageY + 'px');
+            }
+        };
+
+        $scope.destroyDropAble = function (event:any) {
+            let body = document.getElementsByTagName('body');
+            let el = document.getElementsByClassName('dragged');
+
+            body[0].classList.remove('lock');
+            el[0].classList.remove('dragged');
+            $scope.dropInit = false;
+        };
     });
