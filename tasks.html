@@ -4,10 +4,24 @@
     <meta charset="UTF-8">
     <title>Tasks</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body{
             background: #569921;
             padding: 10px;
+            color: #17394d;
+            font-family: Helvetica Neue,Arial,Helvetica,sans-serif;
+            font-size: 14px;
+            line-height: 20px;
+            font-weight: 400;
+        }
+        body.lock {
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            -o-user-select: none;
+            -moz-user-select: none;
         }
         .list {
             background-color: #dfe3e6;
@@ -26,13 +40,28 @@
             box-shadow: 0 1px 0 rgba(9,45,66,.25);
             cursor: pointer;
             display: block;
-            max-width: 300px;
             min-height: 20px;
             position: relative;
             text-decoration: none;
             z-index: 0;
             padding: 4px 10px;
             margin: 8px 0;
+        }
+        .task-card .title {
+            display: block;
+            padding-right: 14px;
+        }
+        .task-card-operation {
+            background-color: #f5f6f7;
+            background-clip: padding-box;
+            background-origin: padding-box;
+            border-radius: 3px;
+            opacity: .8;
+            padding: 4px;
+            position: absolute;
+            right: 2px;
+            top: 2px;
+            z-index: 40;
         }
         .margin-bt-10{
             margin-bottom: 10px;
@@ -43,15 +72,22 @@
         .color-white {
             color:#fff;
         }
+        .pointer-events-none {
+            pointer-events: none;
+        }
         .modal {
             display: block;
             background: rgba(0, 0, 0, 0.5);
+        }
+        .dragged {
+            position: fixed;
+            z-index:10;
         }
     </style>
     <script src="./js/tasks.js"></script>
 </head>
 <body>
-<div ng-controller="tasksController">
+<div ng-controller="tasksController" ng-mouseup="destroyDropAble()" ng-mousemove="moveAble($event)">
     <h2 class="color-white">{{name}}</h2>
     <div class="row">
         <div class="col-md-4">
@@ -63,12 +99,17 @@
                     <div ng-include="showAddTask ? tpl.addTask : ''"></div>
                     <div data-task="{{item.id}}" class="task-card" ng-repeat="(key, item) in tasks track by $index">
                         <span class="title">{{item.name}}</span>
-                        <button class="btn btn-sm btn-secondary" ng-click="editTask($event)">Edit</button>
+                        <button class="btn btn-sm btn-light fa fa-pencil task-card-operation" ng-click="editTask($event)" title="Edit"></button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="row margin-tp-10">
+        <div ng-repeat="(key, list) in lists track by $index" ng-include src="'tpl/list.task.html'" class="col-md-{{12/lists.length}}"></div>
+    </div>
+
     <div ng-include="showEditTask ? tpl.editTask : ''"></div>
 </div>
 </body>
