@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appEvents">
+<head>
+    <meta charset="UTF-8">
+    <title>Events</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <style>
+        body.lock {
+            user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+            -o-user-select: none;
+            -moz-user-select: none;
+            background: navajowhite;
+        }
+        .list {
+            padding: 10px;
+            background: #e8e8e8;
+            border: solid;
+            width: 25%;
+            display: inline-block;
+            margin: 10px;
+            vertical-align: top;
+        }
+        .event {
+            border: solid;
+            padding: 4px 10px;
+            margin: 4px 0;
+        }
+        .cloned {
+            position: fixed;
+            left:0;
+            top: 0;
+        }
+    </style>
+    <script src="./js/events.js"></script>
+</head>
+<body>
+<div ng-controller="eventsController" ng-mouseup="dragEventDestroy($event)" ng-mousemove="dragMove($event)">
+    <h1>{{title}}</h1>
+
+    <div data-list="{{list.id}}" ng-repeat="list in lists" class="list">
+        <span>{{list.name}}</span>
+        <button class="btn btn-secondary btn-sm" ng-click="add($event)">Add event</button>
+        <div ng-include="list.addEvent ? tpls.events.add : ''"></div>
+        <div class="event draggable" ng-mousedown="dragEventInit($event)" ng-repeat="event in list.events track by $index" ng-include="tpls.events.event"></div>
+    </div>
+
+    <ul>
+        <li ng-repeat="todo in todos">{{todo.title}}</li>
+    </ul>
+</div>
+</body>
+</html>
