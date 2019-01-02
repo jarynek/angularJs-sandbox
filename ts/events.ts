@@ -82,20 +82,42 @@ angularEvents.module('appEvents', [filterEvents])
         /**
          * dragEventInit
          */
-        $scope.dragEventInit = function (event:any) {
+        $scope.dragEventInit = function (event: any) {
+
             $scope.dragInit = true;
-            console.log($scope.dragInit);
+            let el = event.target;
+            let clone = el.closest('.draggable').cloneNode(true);
+            let body = document.getElementsByTagName('body');
+
+            clone.classList.add('cloned');
+
+            body[0].appendChild(clone);
         };
 
-        $scope.dragEventDestroy = function (event:any) {
+        /**
+         * dragEventDestroy
+         * @param {object} event
+         */
+        $scope.dragEventDestroy = function (event: any) {
             $scope.dragInit = false;
-            console.log($scope.dragInit);
+            let cloned = document.getElementsByClassName('cloned');
+
+            if (cloned.length > 0) {
+                cloned[0].remove();
+            }
         };
 
-        $scope.dragMove = function (event:any) {
+        /**
+         * dragMove
+         * @param {object} event
+         */
+        $scope.dragMove = function (event: any) {
             let list = event.target;
-            if($scope.dragInit == true){
-                console.log(list);
+            if ($scope.dragInit == true) {
+                let cloned = document.getElementsByClassName('cloned');
+                if(cloned[0]){
+                    cloned[0].setAttribute('style', 'left:' + event.pageX + ', top: ' + event.pageX + '');
+                }
             }
         };
     });
