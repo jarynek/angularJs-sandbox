@@ -90,6 +90,7 @@ angularEvents.module('appEvents', [filterEvents])
             let body = document.getElementsByTagName('body');
 
             clone.classList.add('cloned');
+            body[0].classList.add('lock');
 
             body[0].appendChild(clone);
         };
@@ -101,10 +102,12 @@ angularEvents.module('appEvents', [filterEvents])
         $scope.dragEventDestroy = function (event: any) {
             $scope.dragInit = false;
             let cloned = document.getElementsByClassName('cloned');
+            let body = document.getElementsByTagName('body');
 
             if (cloned.length > 0) {
                 cloned[0].remove();
             }
+            body[0].classList.remove('lock');
         };
 
         /**
@@ -113,10 +116,12 @@ angularEvents.module('appEvents', [filterEvents])
          */
         $scope.dragMove = function (event: any) {
             let list = event.target;
+
             if ($scope.dragInit == true) {
                 let cloned = document.getElementsByClassName('cloned');
+
                 if(cloned[0]){
-                    cloned[0].setAttribute('style', 'left:' + event.pageX + ', top: ' + event.pageX + '');
+                    cloned[0].setAttribute('style', 'left:' + event.pageX + 'px; top: ' + event.pageY + 'px');
                 }
             }
         };
