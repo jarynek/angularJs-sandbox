@@ -101,7 +101,11 @@ angularEvents.module('appEvents', [filterEvents])
 
             $scope.lists.filter((item: any) => {
                 if (item.id == id) {
-                    item.events.push({id: Services.setEventId($scope.lists), title: this.event.title});
+                    item.events.push({
+                        id: Services.setEventId($scope.lists),
+                        title: this.event.title,
+                        edit: false
+                    });
                     item.addEvent = false;
                 }
             });
@@ -113,7 +117,20 @@ angularEvents.module('appEvents', [filterEvents])
          */
         $scope.editTask = function (event: any) {
             event.preventDefault();
-            console.log(event.target);
+
+            let el = event.target.closest('.event');
+            let eventId = el.getAttribute('data-event');
+            let listId = el.closest('.list').getAttribute('data-list');
+
+            $scope.lists.filter((list: any) => {
+                if (list.id == listId) {
+                    list.events.filter((event: any) => {
+                        if (event.id == eventId) {
+                            event.edit = !event.edit;
+                        }
+                    });
+                }
+            });
         };
 
         /**
