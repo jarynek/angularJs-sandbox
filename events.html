@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Events</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body.lock {
             user-select: none;
@@ -12,7 +13,10 @@
             -webkit-touch-callout: none;
             -o-user-select: none;
             -moz-user-select: none;
-            background: navajowhite;
+            cursor: pointer;
+        }
+        body.lock * {
+            cursor: pointer;
         }
         .list {
             padding: 10px;
@@ -27,18 +31,41 @@
             border: solid;
             padding: 4px 10px;
             margin: 4px 0;
-            width: 160px;
+            width: 100%;
+            position: relative;
+        }
+        .event-card-operation {
+            background-color: transparent;
+            background-clip: padding-box;
+            background-origin: padding-box;
+            border-radius: 3px;
+            opacity: .8;
+            padding: 4px;
+            position: absolute;
+            right: 2px;
+            top: 2px;
+            z-index: 40;
+            border: none;
+        }
+        .event-card-operation:hover {
+            background: transparent;
+            color: #e91e63;
         }
         .cloned {
             position: fixed;
             pointer-events: none;
             background: red;
+            transform: rotate(10deg);
         }
         .hdn {
             display: none;
         }
         .active {
-            background: green;
+            background: #fbef88;
+        }
+        .disabled {
+            background: gray;
+            opacity: 0.2;
         }
     </style>
     <script src="./js/events.js"></script>
@@ -51,7 +78,7 @@
         <span>{{list.name}}</span>
         <button class="btn btn-secondary btn-sm" ng-click="add($event)">Add event</button>
         <div ng-include="list.addEvent ? tpls.events.add : ''"></div>
-        <div class="event draggable" ng-mousedown="dragEventInit($event)" ng-repeat="event in list.events track by $index" ng-include="tpls.events.event"></div>
+        <div data-event="{{event.id}}" class="event draggable" ng-mousedown="dragEventInit($event)" ng-repeat="event in list.events track by $index" ng-include="tpls.events.event"></div>
     </div>
 
     <ul>

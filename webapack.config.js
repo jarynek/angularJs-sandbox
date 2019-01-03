@@ -5,6 +5,7 @@ module.exports = {
         homepage: './ts/homepage.ts',
         tasks: './ts/tasks.ts',
         events: './ts/events.ts',
+        class: './ts/class.ts'
     },
     module: {
         rules: [

@@ -2,13 +2,37 @@ const angularEvents = require('angular');
 const filterEvents = require('angular-filter');
 
 angularEvents.module('appEvents', [filterEvents])
-    .controller('eventsController', function ($scope: any, $http: any) {
+    .factory('Services', function () {
+        return {
+            /**
+             * setEventId
+             * @param {object} arg
+             * @return {parseInt} max ids
+             */
+            setEventId: (arg: any) => {
+                let ids = [0];
+                arg.map((list: any) => {
+                    list.events.map((item: any) => {
+                        ids.push(item.id);
+                    });
+                });
+                return Math.max(...ids) + 1;
+            }
+        }
+    })
+    .controller('eventsController', function ($scope: any, $http: any, Services: any) {
         $scope.title = 'Events AngularJs';
 
         $scope.dragInit = false;
+
+        /**
+         * Draggable options
+         */
         $scope.dragg = {
-          left:null,
-          top:null
+            left: null,
+            top: null,
+            source: null,
+            event: null
         };
 
         /**
@@ -77,10 +101,19 @@ angularEvents.module('appEvents', [filterEvents])
 
             $scope.lists.filter((item: any) => {
                 if (item.id == id) {
-                    item.events.push({title: this.event.title});
+                    item.events.push({id: Services.setEventId($scope.lists), title: this.event.title});
                     item.addEvent = false;
                 }
             });
+        };
+
+        /**
+         * editTask
+         * @param {object} event
+         */
+        $scope.editTask = function (event: any) {
+            event.preventDefault();
+            console.log(event.target);
         };
 
         /**
@@ -88,22 +121,26 @@ angularEvents.module('appEvents', [filterEvents])
          */
         $scope.dragEventInit = function (event: any) {
 
-            let el = event.target;
-            let clone = el.closest('.draggable').cloneNode(true);
-            let body = document.getElementsByTagName('body');
-
-            if(!el){
+            if (!event.target) {
                 return;
             }
+
+            let el = event.target.closest('.event');
+            let clone = el.closest('.draggable').cloneNode(true);
+            let body = document.getElementsByTagName('body');
 
             $scope.dragInit = true;
             $scope.dragg.left = event.pageX - el.getBoundingClientRect().left;
             $scope.dragg.top = event.pageY - el.getBoundingClientRect().top;
+            $scope.dragg.source = el.closest('.list');
+            $scope.dragg.event = el;
+
+            el.classList.add('disabled');
+
+            body[0].classList.add('lock');
+            body[0].appendChild(clone);
 
             clone.classList.add('cloned', 'hdn');
-            body[0].classList.add('lock');
-
-            body[0].appendChild(clone);
         };
 
         /**
@@ -118,19 +155,42 @@ angularEvents.module('appEvents', [filterEvents])
             let target = el.closest('.list') ? el.closest('.list') : null;
             let cloned = document.getElementsByClassName('cloned');
             let body = document.getElementsByTagName('body');
+            let disabled = document.getElementsByClassName('disabled');
 
             /**
              * Add event to list
              */
-            if(target && cloned){
+            if (target && cloned.length > 0 && target !== $scope.dragg.source) {
                 let id = target.getAttribute('data-list');
 
-                $scope.lists.filter((item:any)=>{
-                   if(item.id == id){
-                       item.events.push({title: 'sdfds'});
-                       console.log(item);
-                       console.log(cloned);
-                   }
+                $scope.lists.filter((item: any) => {
+
+                    if (item.id == id) {
+
+                        /**
+                         * Filter list
+                         */
+                        $scope.lists.filter((list: any) => {
+                            if (list.id == $scope.dragg.source.getAttribute('data-list')) {
+
+                                /**
+                                 * Filter event
+                                 */
+                                list.events.filter((event: any) => {
+                                    if (event.id == $scope.dragg.event.getAttribute('data-event')) {
+                                        /**
+                                         * Push event to target list
+                                         */
+                                        item.events.push(event);
+                                        /**
+                                         * Delete event form source list
+                                         */
+                                        list.events.splice(list.events.findIndex((item: any) => item.id === event.id), 1);
+                                    }
+                                });
+                            }
+                        });
+                    }
                 });
             }
 
@@ -142,6 +202,9 @@ angularEvents.module('appEvents', [filterEvents])
             }
 
             body[0].classList.remove('lock');
+            if (disabled.length > 0) {
+                disabled[0].classList.remove('disabled');
+            }
 
             $scope.dragg.left = null;
             $scope.dragg.top = null;
@@ -161,26 +224,25 @@ angularEvents.module('appEvents', [filterEvents])
             if ($scope.dragInit == true) {
                 let cloned = document.getElementsByClassName('cloned')[0];
 
-                if(cloned){
+                if (cloned) {
                     let left = (event.pageX - $scope.dragg.left);
                     let top = (event.pageY - $scope.dragg.top);
                     let target = el.closest('.list') ? el.closest('.list') : null;
 
                     cloned.classList.remove('hdn');
-                    cloned.setAttribute('style', 'left:' + left + 'px; top: ' + top + 'px');
+                    cloned.setAttribute('style', 'width: ' + $scope.dragg.event.getBoundingClientRect().width + 'px ;left:' + left + 'px; top: ' + top + 'px');
 
                     /**
                      * Remove class active
                      */
-                    document.querySelectorAll('.active').forEach(function(item){
+                    document.querySelectorAll('.active').forEach(function (item) {
                         item.classList.remove('active');
                     });
 
-                    if(target !== null){
+                    if (target !== null) {
                         let listId = target.getAttribute('data-list');
 
                         target.classList.add('active');
-                        console.log(listId);
                     }
                 }
             }

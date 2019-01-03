@@ -10,6 +10,8 @@ if(isset($_GET['tasks'])){
     include_once 'tasks.html';
 }elseif(isset($_GET['events'])){
 	include_once 'events.html';
+}elseif(isset($_GET['class'])){
+	include_once 'class.html';
 }else{
 	include_once 'homepage.html';
 }
