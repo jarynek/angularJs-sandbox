@@ -5,6 +5,34 @@
     <title>Events</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script>
+        if (!Element.prototype.matches) {
+            Element.prototype.matches = Element.prototype.msMatchesSelector ||
+                Element.prototype.webkitMatchesSelector;
+        }
+
+        if (!Element.prototype.closest) {
+            Element.prototype.closest = function (s) {
+                let el = this;
+                if (!document.documentElement.contains(el)) return null;
+                do {
+                    if (el.matches(s)) return el;
+                    el = el.parentElement || el.parentNode;
+                } while (el !== null && el.nodeType === 1);
+                return null;
+            };
+        }
+
+        if (!Array.prototype.forEach) {
+            Array.prototype.forEach = function (fn, scope) {
+                for (var i = 0, len = this.length; i < len; ++i) {
+                    fn.call(scope, this[i], i, this);
+                }
+            }
+        }
+        console.log('closest polyfill');
+    </script>
     <style>
         body.lock {
             user-select: none;
@@ -15,9 +43,11 @@
             -moz-user-select: none;
             cursor: pointer;
         }
+
         body.lock * {
             cursor: pointer;
         }
+
         .list {
             padding: 10px;
             background: #e8e8e8;
@@ -27,6 +57,7 @@
             margin: 10px;
             vertical-align: top;
         }
+
         .event {
             border: solid;
             padding: 4px 10px;
@@ -34,6 +65,7 @@
             width: 100%;
             position: relative;
         }
+
         .event-card-operation {
             background-color: transparent;
             background-clip: padding-box;
@@ -47,22 +79,27 @@
             z-index: 40;
             border: none;
         }
+
         .event-card-operation:hover {
             background: transparent;
             color: #e91e63;
         }
+
         .cloned {
             position: fixed;
             pointer-events: none;
             background: red;
             transform: rotate(10deg);
         }
+
         .hdn {
             display: none;
         }
+
         .active {
             background: #fbef88;
         }
+
         .disabled {
             background: gray;
             opacity: 0.2;

@@ -21,6 +21,9 @@ angularEvents.module('appEvents', [filterEvents])
         }
     })
     .controller('eventsController', function ($scope: any, $http: any, Services: any) {
+
+        console.log(Element.prototype.closest);
+
         $scope.title = 'Events AngularJs';
 
         $scope.dragInit = false;
@@ -41,7 +44,8 @@ angularEvents.module('appEvents', [filterEvents])
         $scope.lists = [
             {id: 1, name: 'One', addEvent: false, events: []},
             {id: 2, name: 'Two', addEvent: false, events: []},
-            {id: 3, name: 'Three', addEvent: false, events: []}
+            {id: 3, name: 'Three', addEvent: false, events: []},
+            {id: 4, name: 'Four', addEvent: false, events: []}
         ];
 
         /**
