@@ -17,6 +17,30 @@ angularEvents.module('appEvents', [filterEvents])
                     });
                 });
                 return Math.max(...ids) + 1;
+            },
+            /**
+             * Set placeholder
+             * @param {object} el
+             * @param {object} parent
+             * @param {string} area
+             */
+            setPlaceholder: (el: any, parent: any, area: any) => {
+
+                console.log(el);
+
+                if (document.getElementsByClassName('placeholder').length > 0) {
+                    document.getElementsByClassName('placeholder')[0].remove();
+                }
+
+                let placeholder = document.createElement("span");
+                placeholder.className = 'placeholder';
+                placeholder.setAttribute('style', 'height: ' + el.getBoundingClientRect().height + 'px');
+
+                if (area == 'after') {
+                    parent.parentNode.insertBefore(placeholder, parent.nextSibling);
+                    return;
+                }
+                parent.parentNode.insertBefore(placeholder, parent);
             }
         }
     })
@@ -24,6 +48,8 @@ angularEvents.module('appEvents', [filterEvents])
         $scope.title = 'Events AngularJs';
 
         $scope.dragInit = false;
+        $scope.eventEdit = false;
+        $scope.searchUserInit = false;
 
         /**
          * Draggable options
@@ -32,17 +58,21 @@ angularEvents.module('appEvents', [filterEvents])
             left: null,
             top: null,
             source: null,
-            event: null
+            event: null,
+            index: null
         };
 
         /**
-         * Lists
+         * Default lists
          */
-        $scope.lists = [
+        $scope.listsDefault = [
             {id: 1, name: 'One', addEvent: false, events: []},
             {id: 2, name: 'Two', addEvent: false, events: []},
-            {id: 3, name: 'Three', addEvent: false, events: []}
+            {id: 3, name: 'Three', addEvent: false, events: []},
+            {id: 4, name: 'Four', addEvent: false, events: []},
         ];
+        $scope.eventsStorage = window.localStorage;
+        $scope.lists = JSON.parse($scope.eventsStorage.getItem('events')) ? JSON.parse($scope.eventsStorage.getItem('events')) : $scope.listsDefault;
 
         /**
          * Templates
@@ -50,6 +80,7 @@ angularEvents.module('appEvents', [filterEvents])
         $scope.tpls = {
             events: {
                 add: './tpl/events/add.form.html',
+                edit: './tpl/events/edit.form.html',
                 event: './tpl/events/event.html'
             }
         };
@@ -60,6 +91,14 @@ angularEvents.module('appEvents', [filterEvents])
         $http.get('https://jsonplaceholder.typicode.com/todos')
             .then(function (response: any) {
                 $scope.todos = response.data;
+            });
+
+        /**
+         * Users
+         */
+        $http.get('https://jsonplaceholder.typicode.com/users')
+            .then(function (response: any) {
+                $scope.users = response.data;
             });
 
         /**
@@ -103,19 +142,25 @@ angularEvents.module('appEvents', [filterEvents])
                 if (item.id == id) {
                     item.events.push({
                         id: Services.setEventId($scope.lists),
-                        title: this.event.title,
-                        edit: false
+                        title: this.addEvent,
+                        edit: false,
+                        index: item.events.length + 1
                     });
                     item.addEvent = false;
                 }
             });
+
+            /**
+             * Save to locale storage
+             */
+            $scope.eventsStorage.setItem('events', JSON.stringify($scope.lists));
         };
 
         /**
          * editTask
          * @param {object} event
          */
-        $scope.editTask = function (event: any) {
+        $scope.editEvent = function (event: any) {
             event.preventDefault();
 
             let el = event.target.closest('.event');
@@ -127,10 +172,41 @@ angularEvents.module('appEvents', [filterEvents])
                     list.events.filter((event: any) => {
                         if (event.id == eventId) {
                             event.edit = !event.edit;
+                            $scope.thisEvent = event;
                         }
                     });
                 }
             });
+
+            $scope.eventEdit = !$scope.eventEdit;
+        };
+
+        /**
+         * Save event
+         * @param {object} event
+         */
+        $scope.saveEvent = function (event: any) {
+            event.preventDefault();
+
+            if (this.eventTitle) {
+                $scope.thisEvent.title = this.eventTitle ? this.eventTitle : '...';
+            }
+            if (this.eventUser) {
+                $scope.thisEvent.user = $scope.users.filter((user: any) => user.id == this.eventUser);
+            }
+
+            $scope.eventEdit = false;
+            $scope.thisEvent = null;
+
+            /**
+             * Save to locale storage
+             */
+            $scope.eventsStorage.setItem('events', JSON.stringify($scope.lists));
+        };
+
+        $scope.searchUser = function () {
+            $scope.searchUserInit = true;
+            console.log(this.searchEventUser);
         };
 
         /**
@@ -156,6 +232,7 @@ angularEvents.module('appEvents', [filterEvents])
 
             body[0].classList.add('lock');
             body[0].appendChild(clone);
+            clone.setAttribute('style', 'width: ' + $scope.dragg.event.getBoundingClientRect().width + 'px');
 
             clone.classList.add('cloned', 'hdn');
         };
@@ -180,8 +257,10 @@ angularEvents.module('appEvents', [filterEvents])
             if (target && cloned.length > 0 && target !== $scope.dragg.source) {
                 let id = target.getAttribute('data-list');
 
+                /**
+                 * Filter list
+                 */
                 $scope.lists.filter((item: any) => {
-
                     if (item.id == id) {
 
                         /**
@@ -209,6 +288,30 @@ angularEvents.module('appEvents', [filterEvents])
                         });
                     }
                 });
+            }else if(target === $scope.dragg.source){
+                $scope.dragg.event.classList.remove('hdn');
+            }
+
+            /**
+             * Reindex events
+             */
+            if(target && $scope.dragg.event){
+                $scope.lists.filter((list:any) => {
+                    if(list.id == target.getAttribute('data-list')){
+
+                        let thisEvent = $scope.dragg.event.getAttribute('data-event');
+                        let eventIndex  = parseInt($scope.dragg.index.getAttribute('data-index'));
+                        let targetIndex = parseInt($scope.dragg.event.getAttribute('data-index'));
+
+                        list.events.filter((event:any) => {
+                            if(event.id == thisEvent){
+                                event.index = eventIndex;
+                            }else if(event.id == $scope.dragg.index.getAttribute('data-event')){
+                                event.index = targetIndex;
+                            }
+                        });
+                    }
+                });
             }
 
             /**
@@ -221,6 +324,18 @@ angularEvents.module('appEvents', [filterEvents])
             body[0].classList.remove('lock');
             if (disabled.length > 0) {
                 disabled[0].classList.remove('disabled');
+            }
+
+            /**
+             * Save to locale storage
+             */
+            $scope.eventsStorage.setItem('events', JSON.stringify($scope.lists));
+
+            /**
+             * Remove placeholder
+             */
+            if (document.getElementsByClassName('placeholder').length > 0) {
+                document.getElementsByClassName('placeholder')[0].remove();
             }
 
             $scope.dragg.left = null;
@@ -237,6 +352,7 @@ angularEvents.module('appEvents', [filterEvents])
         $scope.dragMove = function (event: any) {
 
             let el = event.target;
+            let thisEvent = el.closest('.event');
 
             if ($scope.dragInit == true) {
                 let cloned = document.getElementsByClassName('cloned')[0];
@@ -247,7 +363,7 @@ angularEvents.module('appEvents', [filterEvents])
                     let target = el.closest('.list') ? el.closest('.list') : null;
 
                     cloned.classList.remove('hdn');
-                    cloned.setAttribute('style', 'width: ' + $scope.dragg.event.getBoundingClientRect().width + 'px ;left:' + left + 'px; top: ' + top + 'px');
+                    cloned.setAttribute('style', cloned.getAttribute('style') + '; left:' + left + 'px; top: ' + top + 'px');
 
                     /**
                      * Remove class active
@@ -257,9 +373,34 @@ angularEvents.module('appEvents', [filterEvents])
                     });
 
                     if (target !== null) {
-                        let listId = target.getAttribute('data-list');
-
                         target.classList.add('active');
+                    }
+
+                    /**
+                     * Remove over class
+                     */
+                    let over = document.getElementsByClassName('over');
+                    if (over.length > 0) {
+                        over[0].classList.remove('over');
+                    }
+
+
+                    /**
+                     * Create placeholder
+                     */
+                    if (thisEvent && thisEvent !== $scope.dragg.event) {
+                        if (thisEvent) {
+                            let thisMiddle = thisEvent.getBoundingClientRect().top + (thisEvent.getBoundingClientRect().height / 2);
+
+                            if (top < thisMiddle) {
+                                Services.setPlaceholder(cloned, thisEvent, 'before');
+                            } else if (top > thisMiddle) {
+                                Services.setPlaceholder(cloned, thisEvent, 'after');
+                            }
+                            thisEvent.classList.add('over');
+                            $scope.dragg.index = thisEvent;
+                            $scope.dragg.event.classList.add('hdn');
+                        }
                     }
                 }
             }
