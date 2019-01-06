@@ -5,6 +5,7 @@
     <title>Events</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./css/style.css">
     <style>
         body.lock {
             user-select: none;
@@ -20,19 +21,17 @@
         }
         .list {
             padding: 10px;
-            background: #e8e8e8;
-            border: solid;
             width: 25%;
             display: inline-block;
             margin: 10px;
             vertical-align: top;
-        }
-        .event {
-            border: solid;
-            padding: 4px 10px;
-            margin: 4px 0;
-            width: 100%;
+            background-color: #dfe3e6;
+            border-radius: 3px;
+            box-sizing: border-box;
+            flex-direction: column;
+            max-height: 100%;
             position: relative;
+            white-space: normal;
         }
         .event-card-operation {
             background-color: transparent;
@@ -78,12 +77,15 @@
         <span>{{list.name}}</span>
         <button class="btn btn-secondary btn-sm" ng-click="add($event)">Add event</button>
         <div ng-include="list.addEvent ? tpls.events.add : ''"></div>
-        <div data-event="{{event.id}}" class="event draggable" ng-mousedown="dragEventInit($event)" ng-repeat="event in list.events track by $index" ng-include="tpls.events.event"></div>
+        <div data-event="{{event.id}}"
+             data-index="{{event.index}}"
+             class="event draggable"
+             ng-mousedown="dragEventInit($event)"
+             ng-repeat="event in list.events | orderBy:'index' track by $index"
+             ng-include="tpls.events.event"></div>
     </div>
 
-    <ul>
-        <li ng-repeat="todo in todos">{{todo.title}}</li>
-    </ul>
+    <div class="modal fade show" style="display: block;" tabindex="-1" role="dialog" aria-hidden="true" ng-include="eventEdit ? tpls.events.edit : ''"></div>
 </div>
 </body>
 </html>
