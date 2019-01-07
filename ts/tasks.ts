@@ -107,6 +107,8 @@ angularTask.module('appTasks', [filterTask])
 
             event.preventDefault();
 
+            alert('sdfsdf');
+
             let thisItem = event.target;
             let id = thisItem.parentNode.getAttribute('data-task');
 
@@ -116,7 +118,7 @@ angularTask.module('appTasks', [filterTask])
 
             $scope.task = $scope.tasks.filter((item:any) => item.id == id)[0];
             $scope.showEditTask = true;
-        }
+        };
 
         /**
          * addListTask
@@ -151,7 +153,7 @@ angularTask.module('appTasks', [filterTask])
             });
 
             console.log($scope.lists);
-        }
+        };
 
         $scope.dropAble = function (event:any) {
             $scope.dropInit = true;
