@@ -15,6 +15,8 @@
     "@types/node": "^10.12.18",
     "angular": "^1.7.5",
     "angular-filter": "^0.5.17",
+    "bootstrap": "^4.2.1",
+    "bootstrap-sass": "^3.4.0",
     "gulp": "^4.0.0",
     "ng-draggable": "^1.0.0",
     "ngdraggable": "^0.1.10"

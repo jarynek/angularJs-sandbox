@@ -4,11 +4,32 @@
     <meta charset="UTF-8">
     <title>Class</title>
     <link rel="stylesheet" href="./css/style.css">
+    <style>
+        body {
+            background:#fff;
+        }
+    </style>
     <script src="./js/class.js"></script>
 </head>
-<body ng-controller="classController as $ctrl">
-<h1 ng-click="$ctrl.constructor.getTest($event)">{{title}}</h1>
-<h2>{{name}}</h2>
-<div class="message success"><h2>sdfsd</h2></div>
+<body>
+    <div ng-controller="classController as $ctrl">
+        <h1>{{title}}</h1>
+        <h2>{{name}}</h2>
+        <div class="message success"><h2>sdfsd</h2></div>
+    </div>
+
+
+    <div ng-controller="usersController as $userCtrl">
+        <h1>{{title}}</h1>
+        <h2>{{name}}</h2>
+        <button ng-click="$userCtrl._addList($event)">Add list</button>
+        <ul>
+            <li ng-repeat="user in users | orderBy:'name' track by $index">
+                <span>{{user.name}}</span> (<em>{{user.email}}</em>)
+            </li>
+        </ul>
+        <div ng-if="addList" ng-include="'/tpl/lists/add.list.form.html'"></div>
+    </div>
+
 </body>
 </html>

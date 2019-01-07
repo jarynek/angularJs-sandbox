@@ -1,9 +1,13 @@
 const angularClass = require('angular');
+const filterClass = require('angular-filter');
 
 /**
  * import controller
  */
-import classController from './controllers/classController';
 
-angularClass.module('appClass', [])
-    .controller('classController', classController);
+import classController from './controllers/classController';
+import usersController from './controllers/usersController';
+
+angularClass.module('appClass', [filterClass])
+    .controller('classController', classController)
+    .controller('usersController', usersController);

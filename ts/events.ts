@@ -286,7 +286,9 @@ angularEvents.module('appEvents', [filterEvents])
                     }
                 });
             }else if(target === $scope.dragg.source){
-                $scope.dragg.event.classList.remove('hdn');
+                if($scope.dragg.source){
+                    $scope.dragg.event.classList.remove('hdn');
+                }
             }
 
             /**
