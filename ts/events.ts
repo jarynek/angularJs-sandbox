@@ -25,9 +25,6 @@ angularEvents.module('appEvents', [filterEvents])
              * @param {string} area
              */
             setPlaceholder: (el: any, parent: any, area: any) => {
-
-                console.log(el);
-
                 if (document.getElementsByClassName('placeholder').length > 0) {
                     document.getElementsByClassName('placeholder')[0].remove();
                 }
