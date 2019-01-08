@@ -22,7 +22,7 @@
     <div ng-controller="usersController as $userCtrl">
         <h1>{{title}}</h1>
         <h2>{{name}}</h2>
-        <button ng-click="$userCtrl._addList($event)">Add list</button>
+        <button class="btn btn-secondary" ng-click="$userCtrl._addList($event)">Add list</button>
         <ul>
             <li ng-repeat="user in users | orderBy:'name' track by $index">
                 <span>{{user.name}}</span> (<em>{{user.email}}</em>)

@@ -40,8 +40,14 @@ class usersController {
      * @private
      */
     _clickOutside() {
-        document.addEventListener('click', () => {
+        document.addEventListener('click', (event:any) => {
             this.$scope.$apply(() => {
+
+                let thisForm = event.target.closest('form');
+
+                if(thisForm !== null){
+                    return;
+                }
                 this.$scope.addList = false;
             });
         });
