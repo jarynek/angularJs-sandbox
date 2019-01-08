@@ -211,7 +211,16 @@ angularEvents.module('appEvents', [filterEvents])
          */
         $scope.dragEventInit = function (event: any) {
 
-            if (!event.target) {
+            /**
+             * Not init if which is not 1
+             */
+            if(event.which !== 1){
+                return;
+            }
+            /**
+             * Not init if target is not exists
+             */
+            else if (!event.target) {
                 return;
             }
 
@@ -294,7 +303,13 @@ angularEvents.module('appEvents', [filterEvents])
             /**
              * Reindex events
              */
-            if(target && $scope.dragg.event){
+
+            console.log($scope.dragg.index);
+            console.log($scope.dragg.event);
+
+            if(target
+                && $scope.dragg.event
+                && $scope.dragg.index !== null){
                 $scope.lists.filter((list:any) => {
                     if(list.id == target.getAttribute('data-list')){
 
@@ -339,6 +354,7 @@ angularEvents.module('appEvents', [filterEvents])
 
             $scope.dragg.left = null;
             $scope.dragg.top = null;
+            $scope.dragg.index = null;
             el = null;
             target = null;
             body = null;
@@ -350,56 +366,61 @@ angularEvents.module('appEvents', [filterEvents])
          */
         $scope.dragMove = function (event: any) {
 
+            /**
+             * if !dragInit return
+             */
+            if ($scope.dragInit === false) {
+                return;
+            }
+
             let el = event.target;
             let thisEvent = el.closest('.event');
+            let cloned = document.getElementsByClassName('cloned')[0];
 
-            if ($scope.dragInit == true) {
-                let cloned = document.getElementsByClassName('cloned')[0];
+            if (cloned) {
+                let left = (event.pageX - $scope.dragg.left);
+                let top = (event.pageY - $scope.dragg.top);
+                let target = el.closest('.list') ? el.closest('.list') : null;
 
-                if (cloned) {
-                    let left = (event.pageX - $scope.dragg.left);
-                    let top = (event.pageY - $scope.dragg.top);
-                    let target = el.closest('.list') ? el.closest('.list') : null;
+                cloned.classList.remove('hdn');
+                cloned.setAttribute('style', cloned.getAttribute('style') + '; left:' + left + 'px; top: ' + top + 'px');
 
-                    cloned.classList.remove('hdn');
-                    cloned.setAttribute('style', cloned.getAttribute('style') + '; left:' + left + 'px; top: ' + top + 'px');
+                /**
+                 * Remove class active
+                 */
+                document.querySelectorAll('.active').forEach(function (item) {
+                    item.classList.remove('active');
+                });
 
-                    /**
-                     * Remove class active
-                     */
-                    document.querySelectorAll('.active').forEach(function (item) {
-                        item.classList.remove('active');
-                    });
+                if (target !== null) {
+                    target.classList.add('active');
+                }
 
-                    if (target !== null) {
-                        target.classList.add('active');
-                    }
-
-                    /**
-                     * Remove over class
-                     */
-                    let over = document.getElementsByClassName('over');
-                    if (over.length > 0) {
-                        over[0].classList.remove('over');
-                    }
+                /**
+                 * Remove over class
+                 */
+                let over = document.getElementsByClassName('over');
+                if (over.length > 0) {
+                    over[0].classList.remove('over');
+                }
 
 
-                    /**
-                     * Create placeholder
-                     */
-                    if (thisEvent && thisEvent !== $scope.dragg.event) {
-                        if (thisEvent) {
-                            let thisMiddle = thisEvent.getBoundingClientRect().top + (thisEvent.getBoundingClientRect().height / 2);
+                /**
+                 * Create placeholder
+                 */
+                if (thisEvent && thisEvent !== $scope.dragg.event) {
+                    if (thisEvent) {
+                        let thisMiddle = thisEvent.getBoundingClientRect().top + (thisEvent.getBoundingClientRect().height / 2);
 
-                            if (top < thisMiddle) {
-                                Services.setPlaceholder(cloned, thisEvent, 'before');
-                            } else if (top > thisMiddle) {
-                                Services.setPlaceholder(cloned, thisEvent, 'after');
-                            }
-                            thisEvent.classList.add('over');
-                            $scope.dragg.index = thisEvent;
-                            $scope.dragg.event.classList.add('hdn');
+                        if (top < thisMiddle) {
+                            Services.setPlaceholder(cloned, thisEvent, 'before');
+                        } else if (top > thisMiddle) {
+                            Services.setPlaceholder(cloned, thisEvent, 'after');
                         }
+
+                        thisEvent.classList.add('over');
+                        $scope.dragg.index = thisEvent;
+                        $scope.dragg.event.classList.add('hdn');
                     }
                 }
             }
