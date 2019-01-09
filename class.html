@@ -21,9 +21,9 @@
             cursor: pointer;
         }
         li {
-            padding: 4px;
+            padding: 6px;
             border: solid 1px;
-            width: 240px;
+            width: 400px;
             margin-bottom: 4px;
             line-height: normal;
             background: white;
@@ -54,7 +54,7 @@
         <button class="btn btn-secondary" ng-click="$userCtrl._addList($event)">Add list</button>
         <ul>
             <li ng-repeat="user in users | orderBy:'index' track by $index" ng-mousedown="movement.drag($event)" data-user="{{user.id}}">
-                <span>{{user.name}} <strong>{{user.index ? user.index : $index}}</strong></span> (<em>{{user.email}}</em>)
+                <span>{{user.name}} <strong>{{user.index}}</strong></span> (<em>{{user.email}}</em>)
             </li>
         </ul>
         <div ng-if="addList" ng-include="'/tpl/lists/add.list.form.html'"></div>
