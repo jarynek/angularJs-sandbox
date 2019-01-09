@@ -1,4 +1,5 @@
-import Xhr from '../services/Xhr'
+import Xhr from '../services/Xhr';
+import {MovementService} from '../services/MovementService';
 
 class usersController {
 
@@ -6,6 +7,7 @@ class usersController {
     $http: any;
     _xhr: any;
     addListName:any;
+    movement:any;
 
     constructor($scope: any, $http: any) {
         this.$scope = $scope;
@@ -15,6 +17,7 @@ class usersController {
         this.$scope.name = 'users controller';
         this.$scope.title = 'Title for users controller';
         this.$scope.addList = false;
+        this.$scope.movement = new MovementService(this.$scope);
 
         /**
          * _getUsers
@@ -32,7 +35,6 @@ class usersController {
         event.stopPropagation();
 
         this.$scope.addList = !this.$scope.addList;
-        console.log(this.$scope.addList);
     }
 
     /**

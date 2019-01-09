@@ -8,6 +8,22 @@
         body {
             background:#fff;
         }
+        ul {
+            list-style: none;
+            cursor: pointer;
+        }
+        li {
+            padding: 4px;
+            border: solid 1px;
+            width: 240px;
+            margin-bottom: 4px;
+            line-height: normal;
+            background: white;
+        }
+
+        .active {
+            background: #2196f3;
+        }
     </style>
     <script src="./js/class.js"></script>
 </head>
@@ -24,11 +40,21 @@
         <h2>{{name}}</h2>
         <button class="btn btn-secondary" ng-click="$userCtrl._addList($event)">Add list</button>
         <ul>
-            <li ng-repeat="user in users | orderBy:'name' track by $index">
-                <span>{{user.name}}</span> (<em>{{user.email}}</em>)
+            <li ng-repeat="user in users | orderBy:'name' track by $index" ng-mousedown="movement.drag($event)" data-user="{{user.id}}">
+                <span>{{user.name}}{{user.test}}</span> (<em>{{user.email}}</em>)
             </li>
         </ul>
         <div ng-if="addList" ng-include="'/tpl/lists/add.list.form.html'"></div>
+
+
+        <ul>
+            <li data-drag>asdas</li>
+            <li data-drag>asdas</li>
+            <li data-drag>asdas</li>
+            <li data-drag>asdas</li>
+            <li data-drag>asdas</li>
+        </ul>
+
     </div>
 
 </body>
