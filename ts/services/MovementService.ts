@@ -29,11 +29,42 @@ export class MovementService {
      * Drag
      */
     drag(event: any) {
+
+        if (event.which !== 1) {
+            return;
+        }
+
         let target = event.target;
         this.options.el = target.closest('[ng-mousedown]');
         this.options.left = event.pageX - this.options.el.getBoundingClientRect().left;
         this.options.top = event.pageY - this.options.el.getBoundingClientRect().top;
         this.options.init = true;
+
+        document.getElementsByTagName('body')[0].classList.add('drag');
+    }
+
+    /**
+     *
+     * @param el
+     * @param parent
+     * @param area
+     * @private
+     */
+    _placeholder(el: any, parent: any, area: any) {
+
+        if (document.getElementsByClassName('placeholder').length > 0) {
+            document.getElementsByClassName('placeholder')[0].remove();
+        }
+
+        let placeholder = document.createElement('li');
+        placeholder.className = 'placeholder';
+        placeholder.setAttribute('style', 'height: ' + el.getBoundingClientRect().height + 'px');
+
+        if (area == 'after') {
+            parent.parentNode.insertBefore(placeholder, parent.nextSibling);
+            return;
+        }
+        parent.parentNode.insertBefore(placeholder, parent);
     }
 
     /**
@@ -63,12 +94,19 @@ export class MovementService {
                     let left = event.pageX - this.options.left;
                     let top = event.pageY - this.options.top;
 
-                    if(active.length > 0){
+                    if (active.length > 0) {
                         active[0].classList.remove('active');
                     }
 
-                    if(el && this.options.el !== el){
+                    if (el && this.options.el !== el) {
                         el.classList.add('active');
+                        let surface = el.getBoundingClientRect().top + (el.getBoundingClientRect().height / 2);
+
+                        if (event.pageY < surface) {
+                            this._placeholder(this.options.el, el, 'before');
+                        } else if (event.pageY > surface) {
+                            this._placeholder(this.options.el, el, 'after');
+                        }
                     }
 
                     this.options.el.setAttribute('style', 'position:fixed; pointer-events:none; left:' + left + 'px; top: ' + top + 'px');
@@ -87,14 +125,44 @@ export class MovementService {
             movement[0].addEventListener('mouseup', (event: any) => {
                 if (this.options.init === true) {
                     let id = this.options.el.getAttribute('data-user');
-                    this.options.el.setAttribute('style', '');
+                    let placeholder = document.querySelectorAll('.placeholder');
+                    let active = document.querySelectorAll('.active');
 
+                    /**
+                     * Replace placeholder by el and remove placeholder
+                     */
+                    if (placeholder.length > 0) {
+                        placeholder[0].parentNode.insertBefore(this.options.el, placeholder[0]);
+                        placeholder[0].remove();
+                    }
+
+                    if (active.length > 0) {
+                        active[0].remove();
+                    }
+
+                    let els = document.querySelectorAll('[data-user]');
+
+                    /**
+                     * Reindex object
+                     */
+
+                    els.forEach((el: any, index: any) => {
+                        let id = el.getAttribute('data-user');
+                        this.scope.users.filter((user: any) => {
+                            if (user.id == id) {
+                                user.index = index;
+                            }
+                        });
+                    });
+
+                    this.scope.$apply(this.scope.users);
+                    this.scope.usersStorage.setItem('users', JSON.stringify(this.scope.users));
+                    this.options.el.setAttribute('style', '');
                     this.scope.users.filter((user: any) => {
                         if (user.id == id) {
                             user.test = this.counter++;
                         }
                     });
-
                     this.options.init = false;
                 }
             });

@@ -2,7 +2,7 @@ const angularClass = require('angular');
 const filterClass = require('angular-filter');
 
 /**
- * import controller
+ * import controllers
  */
 
 import classController from './controllers/classController';

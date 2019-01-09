@@ -8,6 +8,14 @@
         body {
             background:#fff;
         }
+        body.drag * {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+        }
         ul {
             list-style: none;
             cursor: pointer;
@@ -20,42 +28,36 @@
             line-height: normal;
             background: white;
         }
-
         .active {
-            background: #2196f3;
+            background: #fffcad;
+        }
+        .placeholder {
+            border: none;
+            border-radius: 0;
+            background: #e4e4e4;
         }
     </style>
     <script src="./js/class.js"></script>
 </head>
 <body>
+    <!--classController-->
     <div ng-controller="classController as $ctrl">
         <h1>{{title}}</h1>
         <h2>{{name}}</h2>
         <div class="message success"><h2>sdfsd</h2></div>
     </div>
 
-
+    <!--usersController-->
     <div ng-controller="usersController as $userCtrl">
         <h1>{{title}}</h1>
         <h2>{{name}}</h2>
         <button class="btn btn-secondary" ng-click="$userCtrl._addList($event)">Add list</button>
         <ul>
-            <li ng-repeat="user in users | orderBy:'name' track by $index" ng-mousedown="movement.drag($event)" data-user="{{user.id}}">
-                <span>{{user.name}}{{user.test}}</span> (<em>{{user.email}}</em>)
+            <li ng-repeat="user in users | orderBy:'index' track by $index" ng-mousedown="movement.drag($event)" data-user="{{user.id}}">
+                <span>{{user.name}} <strong>{{user.index ? user.index : $index}}</strong></span> (<em>{{user.email}}</em>)
             </li>
         </ul>
         <div ng-if="addList" ng-include="'/tpl/lists/add.list.form.html'"></div>
-
-
-        <ul>
-            <li data-drag>asdas</li>
-            <li data-drag>asdas</li>
-            <li data-drag>asdas</li>
-            <li data-drag>asdas</li>
-            <li data-drag>asdas</li>
-        </ul>
-
     </div>
-
 </body>
 </html>

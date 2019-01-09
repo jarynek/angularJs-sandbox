@@ -18,6 +18,7 @@ class usersController {
         this.$scope.title = 'Title for users controller';
         this.$scope.addList = false;
         this.$scope.movement = new MovementService(this.$scope);
+        this.$scope.usersStorage = window.localStorage;
 
         /**
          * _getUsers
@@ -60,10 +61,20 @@ class usersController {
      * @private
      */
     _getUsers() {
+
+        /**
+         * If users is in localstorage
+         */
+        if(this.$scope.usersStorage.getItem('users')){
+            this.$scope.users = JSON.parse(this.$scope.usersStorage.getItem('users'));
+            return;
+        }
+        /**
+         * else if not
+         */
         this.$http.get('https://jsonplaceholder.typicode.com/users')
             .then((response: any) => {
                 this.$scope.users = response.data;
-                console.log(this.$scope.users);
             });
     }
 
@@ -74,8 +85,6 @@ class usersController {
      */
     _save(event:any){
         event.preventDefault();
-
-        console.log(this.addListName);
     }
 }
 
