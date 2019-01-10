@@ -59,7 +59,7 @@ export class MovementService {
 
         let placeholder = document.createElement('li');
         placeholder.className = 'placeholder';
-        placeholder.setAttribute('style', 'height: ' + el.getBoundingClientRect().height + 'px');
+        placeholder.setAttribute('style', 'height: ' + el.getBoundingClientRect().height + 'px; width:' + el.getBoundingClientRect().width + 'px');
 
         if (area == 'after') {
             parent.parentNode.insertBefore(placeholder, parent.nextSibling);
