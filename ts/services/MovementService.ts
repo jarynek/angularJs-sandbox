@@ -36,8 +36,9 @@ export class MovementService {
 
         let target = event.target;
         this.options.el = target.closest('[ng-mousedown]');
-        this.options.left = event.pageX - this.options.el.getBoundingClientRect().left;
-        this.options.top = event.pageY - this.options.el.getBoundingClientRect().top;
+        let parent = this.options.el.parentNode;
+        this.options.left = event.pageX - (this.options.el.getBoundingClientRect().left - parent.getBoundingClientRect().left);
+        this.options.top = event.pageY - (this.options.el.getBoundingClientRect().top - parent.getBoundingClientRect().top);
         this.options.init = true;
 
         document.getElementsByTagName('body')[0].classList.add('drag');
@@ -90,6 +91,7 @@ export class MovementService {
                     let target = event.target;
                     let el = target.closest('[ng-mousedown]');
                     let active = document.querySelectorAll('.active');
+                    let bodyRect = Math.abs(document.body.getBoundingClientRect().top);
 
                     let left = event.pageX - this.options.left;
                     let top = event.pageY - this.options.top;
@@ -98,9 +100,16 @@ export class MovementService {
                         active[0].classList.remove('active');
                     }
 
-                    if (el && this.options.el !== el) {
-                        el.classList.add('active');
-                        let surface = el.getBoundingClientRect().top + (el.getBoundingClientRect().height / 2);
+                    if (el && this.options.el) {
+
+                        /**
+                         * add class active
+                         */
+                        if (this.options.el !== el) {
+                            el.classList.add('active');
+                        }
+
+                        let surface = (el.getBoundingClientRect().top + bodyRect) + (el.getBoundingClientRect().height / 2);
 
                         if (event.pageY < surface) {
                             this._placeholder(this.options.el, el, 'before');
@@ -109,7 +118,7 @@ export class MovementService {
                         }
                     }
 
-                    this.options.el.setAttribute('style', 'position:fixed; pointer-events:none; left:' + left + 'px; top: ' + top + 'px');
+                    this.options.el.setAttribute('style', 'position:absolute; pointer-events:none; left:' + left + 'px; top: ' + top + 'px');
                 }
             });
         }
@@ -145,11 +154,11 @@ export class MovementService {
                     /**
                      * Reindex object
                      */
-
                     els.forEach((el: any, index: any) => {
                         let id = el.getAttribute('data-user');
                         this.scope.users.filter((user: any) => {
                             if (user.id == id) {
+                                console.log(user);
                                 user.index = index;
                             }
                         });
@@ -164,6 +173,7 @@ export class MovementService {
                         }
                     });
                     this.options.init = false;
+                    movement = null;
                 }
             });
         }

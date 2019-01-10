@@ -12,16 +12,18 @@
             -webkit-touch-callout: none; /* iOS Safari */
             -webkit-user-select: none; /* Safari */
             -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Firefox */
+            -moz-user-select: none; /* \\Firefox */
             -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
         }
         ul {
             list-style: none;
             cursor: pointer;
+            padding: 20px;
+            border:solid;
         }
         li {
-            padding: 6px;
+            padding: 6px 10px;
             border: solid 1px;
             width: 400px;
             margin-bottom: 4px;
@@ -34,7 +36,8 @@
         .placeholder {
             border: none;
             border-radius: 0;
-            background: #e4e4e4;
+            background: #d8d8d8;
+            margin: 0 0 4px 0;
         }
     </style>
     <script src="./js/class.js"></script>
@@ -52,12 +55,14 @@
         <h1>{{title}}</h1>
         <h2>{{name}}</h2>
         <button class="btn btn-secondary" ng-click="$userCtrl._addList($event)">Add list</button>
-        <ul>
+        <ul class="position-relative">
             <li ng-repeat="user in users | orderBy:'index' track by $index" ng-mousedown="movement.drag($event)" data-user="{{user.id}}">
                 <span>{{user.name}} <strong>{{user.index}}</strong></span> (<em>{{user.email}}</em>)
+                <button ng-click="$userCtrl._ediUser($event)" class="btn btn-primary btn-sm">Edit</button>
             </li>
         </ul>
         <div ng-if="addList" ng-include="'/tpl/lists/add.list.form.html'"></div>
+        <div ng-if="editUser" ng-include="'/tpl/user/edit.user.form.html'"></div>
     </div>
 </body>
 </html>

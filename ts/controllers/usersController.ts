@@ -6,8 +6,9 @@ class usersController {
     $scope: any;
     $http: any;
     _xhr: any;
-    addListName:any;
-    movement:any;
+    addListName: any;
+    editUser: any;
+    movement: any;
 
     constructor($scope: any, $http: any) {
         this.$scope = $scope;
@@ -39,16 +40,29 @@ class usersController {
     }
 
     /**
+     * _ediUser
+     * @param {object} event
+     * @private
+     */
+    _ediUser(event: any) {
+        let el = event.target;
+        let userId = el.parentNode.getAttribute('data-user');
+
+        this.$scope.editUser = !this.$scope.editUser;
+        this.$scope.user = this.$scope.users.filter((user: any) => user.id == userId)[0];
+    }
+
+    /**
      * _clickOutside
      * @private
      */
     _clickOutside() {
-        document.addEventListener('click', (event:any) => {
+        document.addEventListener('click', (event: any) => {
             this.$scope.$apply(() => {
 
                 let thisForm = event.target.closest('form');
 
-                if(thisForm !== null){
+                if (thisForm !== null) {
                     return;
                 }
                 this.$scope.addList = false;
@@ -65,7 +79,7 @@ class usersController {
         /**
          * If users is in localstorage
          */
-        if(this.$scope.usersStorage.getItem('users')){
+        if (this.$scope.usersStorage.getItem('users')) {
             this.$scope.users = JSON.parse(this.$scope.usersStorage.getItem('users'));
             return;
         }
@@ -83,7 +97,7 @@ class usersController {
      * @param {object} event
      * @private
      */
-    _save(event:any){
+    _save(event: any) {
         event.preventDefault();
     }
 }
