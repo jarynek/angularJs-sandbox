@@ -6,7 +6,7 @@ class usersController {
     $scope: any;
     $http: any;
     _xhr: any;
-    addListName: any;
+    lists:any;
     editUser: any;
     movement: any;
 
@@ -18,6 +18,8 @@ class usersController {
         this.$scope.name = 'users controller';
         this.$scope.title = 'Title for users controller';
         this.$scope.addList = false;
+        this.$scope.list = {};
+        this.$scope.lists = [];
         this.$scope.movement = new MovementService(this.$scope);
         this.$scope.usersStorage = window.localStorage;
 
@@ -37,6 +39,15 @@ class usersController {
         event.stopPropagation();
 
         this.$scope.addList = !this.$scope.addList;
+    }
+
+    _saveList(event:any){
+        event.preventDefault();
+
+        this.$scope.list.id = 1;
+        this.$scope.lists.push(this.$scope.list);
+        this.$scope.addList = false;
+        this.$scope.list = {};
     }
 
     /**
@@ -97,7 +108,7 @@ class usersController {
      * @param {object} event
      * @private
      */
-    _save(event: any) {
+    static _save(event: any) {
         event.preventDefault();
     }
 }

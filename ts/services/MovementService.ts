@@ -133,45 +133,30 @@ export class MovementService {
         if (movement.length > 0) {
             movement[0].addEventListener('mouseup', (event: any) => {
                 if (this.options.init === true) {
-                    let id = this.options.el.getAttribute('data-user');
                     let placeholder = document.querySelectorAll('.placeholder');
-                    let active = document.querySelectorAll('.active');
 
                     /**
                      * Replace placeholder by el and remove placeholder
                      */
                     if (placeholder.length > 0) {
-                        placeholder[0].parentNode.insertBefore(this.options.el, placeholder[0]);
-                        placeholder[0].remove();
+                        placeholder[0].parentNode.replaceChild(this.options.el, placeholder[0]);
                     }
-
-                    if (active.length > 0) {
-                        active[0].remove();
-                    }
-
-                    let els = document.querySelectorAll('[data-user]');
 
                     /**
                      * Reindex object
                      */
+                    let els = document.querySelectorAll('[data-user]');
                     els.forEach((el: any, index: any) => {
                         let id = el.getAttribute('data-user');
                         this.scope.users.filter((user: any) => {
                             if (user.id == id) {
-                                console.log(user);
                                 user.index = index;
                             }
                         });
                     });
 
-                    this.scope.$apply(this.scope.users);
                     this.scope.usersStorage.setItem('users', JSON.stringify(this.scope.users));
                     this.options.el.setAttribute('style', '');
-                    this.scope.users.filter((user: any) => {
-                        if (user.id == id) {
-                            user.test = this.counter++;
-                        }
-                    });
                     this.options.init = false;
                     movement = null;
                 }
